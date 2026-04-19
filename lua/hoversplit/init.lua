@@ -174,15 +174,21 @@ function M.create_hover_split(vertical, remain_focused)
 	vim.api.nvim_create_autocmd("WinEnter", {
 		group = augroup,
 		callback = function()
-			if vim.fn.winnr("$") > 2 then
-				return
+			local wins = vim.api.nvim_tabpage_list_wins(0)
+			local normal_wins = {}
+			for _, win in ipairs(wins) do
+				local config = vim.api.nvim_win_get_config(win)
+				if config.relative == "" then
+					table.insert(normal_wins, win)
+				end
 			end
 
-			if vim.api.nvim_get_current_win() == M.hover_winid then
+			if #normal_wins == 1 and normal_wins[1] == M.hover_winid then
 				vim.cmd("quit")
 			end
 		end,
 	})
+
 end
 
 function M.split()
