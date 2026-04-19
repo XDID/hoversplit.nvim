@@ -198,21 +198,6 @@ function M.close_hover_split()
 	end
 	M.hover_bufnr = nil
 	M.hover_winid = nil
-
-	-- 检查是否只剩一个空白窗口，如果是则退出 Neovim
-	vim.schedule(function()
-		local wins = vim.api.nvim_list_wins()
-		if #wins == 1 then
-			local buf = vim.api.nvim_win_get_buf(wins[1])
-			-- 判断是否为无名空缓冲区
-			if vim.bo[buf].buftype == "" and vim.api.nvim_buf_get_name(buf) == "" then
-				local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-				if #lines == 0 or (#lines == 1 and lines[1] == "") then
-					vim.cmd("quit")
-				end
-			end
-		end
-	end)
 end
 
 ---@param options? HoverSplit.Opts

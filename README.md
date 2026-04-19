@@ -22,7 +22,7 @@ Example with `lazy.nvim`:
 
 ```lua
 {
-  "roobert/hoversplit.nvim",
+  "XDID/hoversplit.nvim",
   config = function()
     require("hoversplit").setup()
   end
@@ -52,7 +52,7 @@ Configure key bindings for different functionalities. The default setup options 
 
 ```lua
 {
-  "roobert/hoversplit.nvim",
+  "XDID/hoversplit.nvim",
   config = function()
     require("hoversplit").setup({
       key_bindings = {
