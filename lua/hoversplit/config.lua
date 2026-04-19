@@ -14,7 +14,8 @@ M.options = {
 		split_remain_focused = "<leader>hs",
 		vsplit_remain_focused = "<leader>hv",
 	},
+	height = 10,
+	width = 80,
 }
 
 return M
--- vim:ts=4:sts=4:noet:ai:si:sta:

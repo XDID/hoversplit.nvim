@@ -124,6 +124,13 @@ function M.create_hover_split(vertical, remain_focused)
 	local conceallevel = config.options.conceallevel or 3
 	conceallevel = vim.list_contains({ 0, 1, 2, 3 }, conceallevel) and conceallevel or 3
 	M.hover_winid = vim.api.nvim_open_win(M.hover_bufnr, M.remain_focused, win_opts)
+	if not vertical then
+		local height = config.options.height or 10
+		vim.api.nvim_win_set_height(M.hover_winid, height)
+	else
+		local width = config.options.width or 80
+		vim.api.nvim_win_set_width(M.hover_winid, width)
+	end
 	vim.api.nvim_win_set_buf(M.hover_winid, M.hover_bufnr)
 	vim.api.nvim_buf_set_name(M.hover_bufnr, "hoversplit")
 	vim.bo[M.hover_bufnr].bufhidden = "wipe"
@@ -138,7 +145,7 @@ function M.create_hover_split(vertical, remain_focused)
 		group = augroup,
 		callback = function(args)
 			-- Unregister autocmd if hover buffer does not exists
-    		if not (M.hover_bufnr and M.hover_winid) then -- Condition expands to `not M.hover_bufnr or not M.hover_winid`
+			if not (M.hover_bufnr and M.hover_winid) then -- Condition expands to `not M.hover_bufnr or not M.hover_winid`
 				return true
 			end
 			if args.buf ~= M.hover_bufnr then
@@ -191,6 +198,21 @@ function M.close_hover_split()
 	end
 	M.hover_bufnr = nil
 	M.hover_winid = nil
+
+	-- 检查是否只剩一个空白窗口，如果是则退出 Neovim
+	vim.schedule(function()
+		local wins = vim.api.nvim_list_wins()
+		if #wins == 1 then
+			local buf = vim.api.nvim_win_get_buf(wins[1])
+			-- 判断是否为无名空缓冲区
+			if vim.bo[buf].buftype == "" and vim.api.nvim_buf_get_name(buf) == "" then
+				local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+				if #lines == 0 or (#lines == 1 and lines[1] == "") then
+					vim.cmd("quit")
+				end
+			end
+		end
+	end)
 end
 
 ---@param options? HoverSplit.Opts
